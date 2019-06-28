@@ -46,8 +46,18 @@ int command_vic(int argc, char **argv)
     }
 
     float framerate = (vicline->clock * 1000.0) / (vicline->htotal * vicline->vtotal);
-    printf("  Pixel Clock: %d.%d MHz\n", vicline->clock/1000, vicline->clock % 1000);
-    printf("   Frame Rate: %f Hz\n", framerate);
+    if(vicline->flags & DRM_MODE_FLAG_DBLCLK)
+    {
+        printf("  Pixel Clock: %d.%d MHz\n", vicline->clock/1000, vicline->clock % 1000);
+        printf("   Frame Rate: %f Hz\n", framerate);
+    }
+    else
+    {
+        printf("  Pixel Clock: %d.%d MHz (*2 = %d.%d MHz)\n", 
+            vicline->clock/1000, vicline->clock%1000,
+            vicline->clock*2/1000, vicline->clock*2%1000);
+        printf("   Frame Rate: %f Hz (*2 = %f Hz)\n", framerate, framerate*2.0);
+    }
 	printf("     H Active: %d\n", vicline->hdisplay);
 	printf("H Front Porch: %d\n", vicline->hsync_start-vicline->hdisplay);
 	printf("       H Sync: %d\n", vicline->hsync_end-vicline->hsync_start);
@@ -58,11 +68,12 @@ int command_vic(int argc, char **argv)
 	printf("       V Sync: %d\n", vicline->vsync_end-vicline->vsync_start);
 	printf(" V Back Porch: %d\n", vicline->vtotal-vicline->vsync_end);
     printf("      V Total: %d\n", vicline->vtotal);
-    printf("        Flags:%s%s%s%s%s",
+    printf("        Flags:%s%s%s%s%s%s",
         vicline->flags & DRM_MODE_FLAG_PHSYNC ? " +hsync" : " -hsync",
         vicline->flags & DRM_MODE_FLAG_PVSYNC ? " +vsync" : " -vsync",
-        vicline->flags & DRM_MODE_FLAG_INTERLACE ? " +interlaced" : "",
-        vicline->flags & DRM_MODE_FLAG_DBLSCAN ? " +doublescan" : "",
+        vicline->flags & DRM_MODE_FLAG_INTERLACE ? " +interlace" : "",
+        vicline->flags & DRM_MODE_FLAG_DBLSCAN ? " +dblscan" : "",
+        vicline->flags & DRM_MODE_FLAG_DBLCLK ? " +dblclk" : "",
         vicline->flags & DRM_MODE_FLAG_CSYNC ? (vicline->flags & DRM_MODE_FLAG_PCSYNC ? " +pcsync" : " -pcsync" ) : ""
     );
 
