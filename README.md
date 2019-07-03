@@ -2,7 +2,7 @@
 CTA-861-G and VESA DMT Monitor Timing Reference 
 
 
-###CTA-861-G
+### CTA-861-G
 ```
 $ ./edidvic.exe vic 97
   Pixel Clock: 594.0 MHz (*2 = 1188.0 MHz)
